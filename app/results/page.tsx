@@ -1,0 +1,164 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { Race, RaceResult } from "@/types/f1";
+import { getCurrentRaces, getRaceResults } from "@/lib/api";
+import { RaceSelector } from "@/components/results/race-selector";
+import { ResultsTable } from "@/components/results/results-table";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Card, CardContent } from "@/components/ui/card";
+
+export default function ResultsPage() {
+  const [races, setRaces] = useState<Race[]>([]);
+  const [selectedRound, setSelectedRound] = useState("");
+  const [results, setResults] = useState<RaceResult[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [resultsLoading, setResultsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedRaceInfo, setSelectedRaceInfo] = useState<Race | null>(null);
+
+  // Load available races on mount
+  useEffect(() => {
+    const fetchRaces = async () => {
+      try {
+        const data = await getCurrentRaces();
+        setRaces(data);
+
+        // Find the most recent finished race
+        const now = new Date();
+        const finishedRaces = data.filter((race) => new Date(race.date) <= now);
+        if (finishedRaces.length > 0) {
+          const latestRace = finishedRaces[finishedRaces.length - 1];
+          setSelectedRound(latestRace.round);
+        }
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : "Failed to load races"
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRaces();
+  }, []);
+
+  // Load results when selected race changes
+  useEffect(() => {
+    if (!selectedRound) return;
+
+    const fetchResults = async () => {
+      setResultsLoading(true);
+      try {
+        const selectedRace = races.find((r) => r.round === selectedRound);
+        if (selectedRace) {
+          setSelectedRaceInfo(selectedRace);
+          const data = await getRaceResults(
+            new Date().getFullYear().toString(),
+            selectedRound
+          );
+          setResults(data);
+        }
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : "Failed to load results"
+        );
+      } finally {
+        setResultsLoading(false);
+      }
+    };
+
+    fetchResults();
+  }, [selectedRound, races]);
+
+  if (error) {
+    return (
+      <main className="min-h-screen">
+        <div className="mx-auto max-w-7xl space-y-8 px-4 py-12 sm:px-6 lg:px-8">
+          <div className="rounded-lg border border-red-900/20 bg-red-900/10 p-6 text-center">
+            <p className="text-red-400">Error loading results: {error}</p>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  const finishedRaces = races.filter((race) => new Date(race.date) <= new Date());
+  const hasNoResults = finishedRaces.length === 0;
+
+  return (
+    <main className="min-h-screen">
+      <div className="mx-auto max-w-7xl space-y-8 px-4 py-12 sm:px-6 lg:px-8">
+        {/* Page Header */}
+        <div className="space-y-2">
+          <h1 className="text-4xl font-bold text-foreground">Race Results</h1>
+          <p className="text-lg text-muted-foreground">
+            View results from completed races
+          </p>
+        </div>
+
+        {hasNoResults ? (
+          <Card className="border-border">
+            <CardContent className="p-8 text-center">
+              <p className="text-muted-foreground">
+                No finished races yet. Check back after the first race of the
+                season!
+              </p>
+            </CardContent>
+          </Card>
+        ) : (
+          <>
+            {/* Race Selector */}
+            <div>
+              {loading ? (
+                <Skeleton className="h-28 w-full rounded-xl" />
+              ) : (
+                <RaceSelector
+                  races={races}
+                  selectedRound={selectedRound}
+                  onRoundChange={setSelectedRound}
+                />
+              )}
+            </div>
+
+            {/* Selected Race Info */}
+            {selectedRaceInfo && (
+              <div className="space-y-2 rounded-xl border border-border bg-card p-6 shadow-sm backdrop-blur-xl">
+                <h2 className="text-2xl font-bold text-foreground">
+                  {selectedRaceInfo.raceName}
+                </h2>
+                <p className="text-muted-foreground">
+                  {selectedRaceInfo.Circuit.Location.locality},{" "}
+                  {selectedRaceInfo.Circuit.Location.country}
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  {new Date(selectedRaceInfo.date).toLocaleDateString(
+                    "en-US",
+                    {
+                      weekday: "long",
+                      month: "long",
+                      day: "numeric",
+                      year: "numeric",
+                    }
+                  )}
+                </p>
+              </div>
+            )}
+
+            {/* Results Table */}
+            {resultsLoading ? (
+              <div className="space-y-2">
+                <Skeleton className="h-12 w-full" />
+                <Skeleton className="h-10 w-full" />
+                <Skeleton className="h-10 w-full" />
+                <Skeleton className="h-10 w-full" />
+              </div>
+            ) : (
+              <ResultsTable results={results} />
+            )}
+          </>
+        )}
+      </div>
+    </main>
+  );
+}
