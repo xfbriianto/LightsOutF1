@@ -14,6 +14,20 @@ export function RaceCard({ race }: RaceCardProps) {
 
   const formattedDate = formatWIBDateShort(race.date);
   const formattedTime = formatWIBTime(race.date, race.time);
+  const sessions = [
+    { label: "FP1", session: race.FirstPractice },
+    { label: "FP2", session: race.SecondPractice },
+    { label: "FP3", session: race.ThirdPractice },
+    { label: "Sprint", session: race.Sprint },
+    { label: "Qualifying", session: race.Qualifying },
+  ].filter(
+    (
+      item
+    ): item is {
+      label: string;
+      session: { date: string; time: string };
+    } => Boolean(item.session)
+  );
 
   return (
   <Card className="group overflow-hidden border border-[#2a2530] bg-[#141118] transition-all hover:border-[#3d3648] hover:shadow-[0_4px_24px_rgba(0,0,0,0.4)] rounded-2xl">
@@ -71,8 +85,43 @@ export function RaceCard({ race }: RaceCardProps) {
 
       {/* Footer */}
       <div className="border-t border-[#1e1a26] bg-[#141118] px-[18px] py-3 flex flex-col gap-[3px]">
-        <p className="text-[13px] font-semibold text-white">{formattedDate}</p>
-        <p className="text-[12px] text-[#706a7a]">{formattedTime}</p>
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <p className="text-[13px] font-semibold text-white">{formattedDate}</p>
+            <p className="text-[12px] text-[#706a7a]">{formattedTime} WIB</p>
+          </div>
+          {race.url && (
+            <a
+              href={race.url}
+              target="_blank"
+              rel="noreferrer"
+              className="shrink-0 rounded-full border border-[#2a2530] px-3 py-[5px] text-[11px] font-semibold text-[#c8c2d4] transition-colors hover:border-[#e03535] hover:text-white"
+            >
+              Details
+            </a>
+          )}
+        </div>
+
+        {sessions.length > 0 && (
+          <div className="mt-3 grid grid-cols-2 gap-2 border-t border-[#1e1a26] pt-3">
+            {sessions.map(({ label, session }) => (
+              <div
+                key={label}
+                className="rounded-lg border border-[#24202c] bg-[#1a1621] px-3 py-2"
+              >
+                <p className="text-[11px] font-semibold text-[#c8c2d4]">
+                  {label}
+                </p>
+                <p className="mt-[2px] text-[11px] text-[#706a7a]">
+                  {formatWIBDateShort(session.date)}
+                </p>
+                <p className="text-[11px] text-[#e03535]">
+                  {formatWIBTime(session.date, session.time)} WIB
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
     </CardContent>
