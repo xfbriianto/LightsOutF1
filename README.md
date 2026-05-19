@@ -1,35 +1,73 @@
 # LightsOut
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [v0](https://v0.app).
+Dashboard Formula 1 yang clean, dark, dan agak racing vibes. Project ini dibuat buat lihat info F1 dengan lebih gampang: race calendar, results, driver standings, constructor standings, sampai next race countdown.
 
-## Built with v0
+## Fitur
 
-This repository is linked to a [v0](https://v0.app) project. You can continue developing by visiting the link below -- start new chats to make changes, and v0 will push commits directly to this repo. Every merge to `main` will automatically deploy.
+- Race calendar lengkap
+- Hasil race yang sudah selesai
+- Driver standings
+- Constructor standings
+- Next race card + countdown
+- Background animasi dark dengan floating lines
+- UI glass/dark yang simple dan modern
+- Responsive, jadi tetap enak dibuka di desktop maupun mobile (masih belum sepenuhnya)
 
-[Continue working on v0 →](https://v0.app/chat/projects/prj_epKOjAd9jgTY6aYWdrA8nEAIEqQ0)
+## Tech Stack
 
-## Getting Started
+- Next.js 16
+- React 19
+- TypeScript
+- Tailwind CSS 4
+- shadcn/ui style components
+- Radix UI
+- Three.js
+- Lucide React
+- Vercel Analytics
 
-First, run the development server:
+## Cara Jalanin
+
+Install dependency:
+
+```bash
+npm install
+```
+
+Jalankan development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Buka di browser:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```txt
+http://localhost:3000
+```
 
-## Learn More
+Kalau port 3000 lagi dipakai:
 
-To learn more, take a look at the following resources:
+```bash
+npm run dev -- -p 3002
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-- [v0 Documentation](https://v0.app/docs) - learn about v0 and how to use it.
+## Build
 
-<a href="https://v0.app/chat/api/kiro/clone/xfbriianto/LightsOut" alt="Open in Kiro"><img src="https://pdgvvgmkdvyeydso.public.blob.vercel-storage.com/open%20in%20kiro.svg?sanitize=true" /></a>
+```bash
+npm run build
+```
+
+## Struktur Singkat
+
+- `app/` halaman utama project
+- `components/` komponen UI dan section halaman
+- `components/home/` bagian home page
+- `components/calendar/` bagian race calendar
+- `components/results/` bagian race results
+- `components/standings/` tabel standings
+- `lib/` helper API dan utility
+- `public/` asset seperti logo dan icon
+
+## Catatan
+
+LightsOut fokusnya bukan cuma nampilin data, tapi bikin dashboard F1 yang terasa cepat, gelap, dan rapi. Simple, tapi tetap ada style.
