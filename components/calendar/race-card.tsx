@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Race } from "@/types/f1";
 import { Card, CardContent } from "@/components/ui/card";
 import { formatWIBDateShort, formatWIBTime } from "@/lib/timezone";
@@ -90,16 +91,12 @@ export function RaceCard({ race }: RaceCardProps) {
             <p className="text-[13px] font-semibold text-white">{formattedDate}</p>
             <p className="text-[12px] text-[#706a7a]">{formattedTime} WIB</p>
           </div>
-          {race.url && (
-            <a
-              href={race.url}
-              target="_blank"
-              rel="noreferrer"
+          <Link
+              href={`/calendar/${race.round}`}
               className="shrink-0 rounded-full border border-[#2a2530] px-3 py-[5px] text-[11px] font-semibold text-[#c8c2d4] transition-colors hover:border-[#e03535] hover:text-white"
             >
               Details
-            </a>
-          )}
+          </Link>
         </div>
 
         {sessions.length > 0 && (
