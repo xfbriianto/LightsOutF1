@@ -121,29 +121,56 @@ export default function ResultsPage() {
               )}
             </div>
 
-            {/* Selected Race Info */}
             {selectedRaceInfo && (
-              <div className="space-y-2 rounded-xl border border-border bg-card p-6 shadow-sm backdrop-blur-xl">
-                <h2 className="text-2xl font-bold text-foreground">
-                  {selectedRaceInfo.raceName}
-                </h2>
-                <p className="text-muted-foreground">
-                  {selectedRaceInfo.Circuit.Location.locality},{" "}
-                  {selectedRaceInfo.Circuit.Location.country}
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  {new Date(selectedRaceInfo.date).toLocaleDateString(
-                    "en-US",
-                    {
-                      weekday: "long",
-                      month: "long",
-                      day: "numeric",
-                      year: "numeric",
-                    }
-                  )}
-                </p>
-              </div>
-            )}
+  <div className="overflow-hidden rounded-2xl border border-[#2a2530] bg-[#141118]">
+    <div className="relative min-h-[120px] bg-[#141118] px-[22px] py-5">
+
+      {/* Wave SVG */}
+      <svg
+        className="absolute inset-0 h-full w-full opacity-55 pointer-events-none"
+        viewBox="0 0 680 120"
+        preserveAspectRatio="none"
+      >
+        <defs>
+          <radialGradient id="ri1" cx="75%" cy="50%" r="55%">
+            <stop offset="0%" stopColor="#c00000" stopOpacity="0.45" />
+            <stop offset="100%" stopColor="#141118" stopOpacity="0" />
+          </radialGradient>
+          <radialGradient id="ri2" cx="95%" cy="85%" r="30%">
+            <stop offset="0%" stopColor="#8b0000" stopOpacity="0.3" />
+            <stop offset="100%" stopColor="#141118" stopOpacity="0" />
+          </radialGradient>
+        </defs>
+        <rect width="680" height="120" fill="#141118" />
+        <rect width="680" height="120" fill="url(#ri1)" />
+        <rect width="680" height="120" fill="url(#ri2)" />
+        <path d="M200 55 Q320 18 460 48 Q560 68 660 32" stroke="#c00000" strokeWidth="1.5" fill="none" opacity="0.5" />
+        <path d="M160 75 Q300 42 440 65 Q545 82 640 55" stroke="#8b0000" strokeWidth="1" fill="none" opacity="0.35" />
+        <path d="M180 95 Q340 68 470 84 Q570 96 650 76" stroke="#c00000" strokeWidth="0.8" fill="none" opacity="0.2" />
+      </svg>
+
+      {/* Content */}
+      <div className="relative z-10 space-y-[5px]">
+        <h2 className="text-[24px] font-bold text-white leading-tight">
+          {selectedRaceInfo.raceName}
+        </h2>
+        <p className="text-[14px] text-[#a09aaa]">
+          {selectedRaceInfo.Circuit.Location.locality},{" "}
+          {selectedRaceInfo.Circuit.Location.country}
+        </p>
+        <p className="text-[12px] font-semibold text-[#e03535]">
+          {new Date(selectedRaceInfo.date).toLocaleDateString("en-US", {
+            weekday: "long",
+            month: "long",
+            day: "numeric",
+            year: "numeric",
+          })}
+        </p>
+      </div>
+
+    </div>
+  </div>
+)}
 
             {/* Results Table */}
             {resultsLoading ? (

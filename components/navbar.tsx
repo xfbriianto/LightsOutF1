@@ -31,7 +31,7 @@ export function Navbar() {
             aria-label="LightsOut home"
             onClick={closeMenu}
           >
-            <img src="/icon.svg" alt="LightsOut Logo" className="h-9 w-9 rounded-lg" />
+            <img src="/lightsout-logo.svg" alt="LightsOut Logo" className="h-9 w-9 rounded-lg" />
             <span className="text-xl font-black uppercase tracking-normal text-foreground">
               LightsOut
             </span>
