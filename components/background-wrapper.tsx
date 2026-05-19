@@ -33,6 +33,7 @@ export function BackgroundWrapper({ children }: BackgroundWrapperProps) {
           gradientMid="#340202"
           gradientEnd="#6a6a6a"
         />
+        <div className="absolute inset-0 bg-black/40" />
       </div>
 
       <div className="relative z-10">{children}</div>
