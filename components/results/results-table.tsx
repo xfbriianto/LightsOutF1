@@ -25,68 +25,100 @@ export function ResultsTable({ results }: ResultsTableProps) {
   }
 
   return (
-    <Card className="border-border">
-      <CardContent className="overflow-x-auto p-0">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-12 text-center">Pos</TableHead>
-              <TableHead>Driver</TableHead>
-              <TableHead className="hidden sm:table-cell">Constructor</TableHead>
-              <TableHead className="hidden md:table-cell">Grid</TableHead>
-              <TableHead className="text-right">Pts</TableHead>
-              <TableHead className="hidden lg:table-cell text-right">Time</TableHead>
+  <Card className="overflow-hidden border border-[#2a2530] bg-[#141118]">
+    <CardContent className="overflow-x-auto p-0">
+      <Table className="border-collapse">
+        <TableHeader>
+          <TableRow className="border-b border-[#2a2530] hover:bg-transparent">
+            <TableHead className="w-12 text-center text-[11px] font-semibold uppercase tracking-widest text-[#706a7a] bg-[#141118]">
+              Pos
+            </TableHead>
+            <TableHead className="text-[11px] font-semibold uppercase tracking-widest text-[#706a7a] bg-[#141118]">
+              Driver
+            </TableHead>
+            <TableHead className="hidden sm:table-cell text-[11px] font-semibold uppercase tracking-widest text-[#706a7a] bg-[#141118]">
+              Constructor
+            </TableHead>
+            <TableHead className="hidden md:table-cell text-center text-[11px] font-semibold uppercase tracking-widest text-[#706a7a] bg-[#141118]">
+              Grid
+            </TableHead>
+            <TableHead className="text-right text-[11px] font-semibold uppercase tracking-widest text-[#706a7a] bg-[#141118]">
+              Pts
+            </TableHead>
+            <TableHead className="hidden lg:table-cell text-right text-[11px] font-semibold uppercase tracking-widest text-[#706a7a] bg-[#141118]">
+              Time
+            </TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {results.map((result) => (
+            <TableRow
+              key={result.Driver.driverId}
+              className="border-b border-[#1e1a26] hover:bg-[#1a1621] transition-colors last:border-0"
+            >
+              {/* Pos */}
+              <TableCell className="text-center w-11">
+                {result.status === "Finished" && result.positionText !== "R" ? (
+                  <span
+                    className={`font-bold text-[15px] ${
+                      parseInt(result.positionText) <= 3
+                        ? "text-[#e03535]"
+                        : "text-white"
+                    }`}
+                  >
+                    {result.positionText}
+                  </span>
+                ) : (
+                  <span className="text-[11px] font-semibold tracking-wide text-[#706a7a]">
+                    {result.status === "Finished"
+                      ? "R"
+                      : result.status.substring(0, 3)}
+                  </span>
+                )}
+              </TableCell>
+
+              {/* Driver */}
+              <TableCell>
+                <div className="flex flex-col gap-0.5">
+                  <span className="text-sm font-semibold text-white">
+                    {result.Driver.givenName} {result.Driver.familyName}
+                  </span>
+                  <span className="text-[11px] font-medium tracking-wider text-[#706a7a]">
+                    {result.Driver.code}
+                  </span>
+                </div>
+              </TableCell>
+
+              {/* Constructor */}
+              <TableCell className="hidden sm:table-cell text-sm text-[#a09aaa]">
+                {result.Constructor.name}
+              </TableCell>
+
+              {/* Grid */}
+              <TableCell className="hidden md:table-cell text-center text-sm text-[#a09aaa]">
+                {result.grid}
+              </TableCell>
+
+              {/* Points */}
+              <TableCell className="text-right text-sm font-bold text-white">
+                {result.points}
+              </TableCell>
+
+              {/* Time */}
+              <TableCell className="hidden lg:table-cell text-right text-xs text-[#706a7a]">
+                {result.Time?.time ? (
+                  result.Time.time
+                ) : (
+                  <span className="text-[#e03535] font-bold text-[11px] tracking-wide">
+                    DNF
+                  </span>
+                )}
+              </TableCell>
             </TableRow>
-          </TableHeader>
-          <TableBody>
-            {results.map((result) => (
-              <TableRow key={result.Driver.driverId}>
-                <TableCell className="text-center font-bold">
-                  {result.status === "Finished" && result.positionText !== "R" ? (
-                    <span
-                      className={
-                        parseInt(result.positionText) <= 3
-                          ? "text-accent"
-                          : "text-foreground"
-                      }
-                    >
-                      {result.positionText}
-                    </span>
-                  ) : (
-                    <span className="text-muted-foreground">
-                      {result.status === "Finished"
-                        ? "R"
-                        : result.status.substring(0, 3)}
-                    </span>
-                  )}
-                </TableCell>
-                <TableCell className="font-medium">
-                  <div className="flex flex-col gap-1">
-                    <span className="text-foreground">
-                      {result.Driver.givenName} {result.Driver.familyName}
-                    </span>
-                    <span className="text-xs text-muted-foreground">
-                      {result.Driver.code}
-                    </span>
-                  </div>
-                </TableCell>
-                <TableCell className="hidden text-sm text-muted-foreground sm:table-cell">
-                  {result.Constructor.name}
-                </TableCell>
-                <TableCell className="hidden text-center md:table-cell">
-                  {result.grid}
-                </TableCell>
-                <TableCell className="text-right font-bold">
-                  {result.points}
-                </TableCell>
-                <TableCell className="hidden text-right text-sm text-muted-foreground lg:table-cell">
-                  {result.Time?.time || "DNF"}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </CardContent>
-    </Card>
-  );
+          ))}
+        </TableBody>
+      </Table>
+    </CardContent>
+  </Card>
+);
 }
