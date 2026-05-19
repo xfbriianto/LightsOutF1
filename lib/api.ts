@@ -87,7 +87,9 @@ export async function getDriverStandings(
     const seasonPath = season || "current";
     const url = `${JOLPI_API_BASE}/${seasonPath}/driverStandings.json`;
     const response = await fetchWithCache<StandingsResponse>(url);
-    return response.MRData.StandingsTable.DriverStandings || [];
+    return (
+      response.MRData.StandingsTable.StandingsLists[0]?.DriverStandings || []
+    );
   } catch (error) {
     console.error("Error fetching driver standings:", error);
     throw error;
@@ -102,7 +104,10 @@ export async function getConstructorStandings(
     const seasonPath = season || "current";
     const url = `${JOLPI_API_BASE}/${seasonPath}/constructorStandings.json`;
     const response = await fetchWithCache<StandingsResponse>(url);
-    return response.MRData.StandingsTable.ConstructorStandings || [];
+    return (
+      response.MRData.StandingsTable.StandingsLists[0]?.ConstructorStandings ||
+      []
+    );
   } catch (error) {
     console.error("Error fetching constructor standings:", error);
     throw error;

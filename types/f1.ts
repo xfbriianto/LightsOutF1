@@ -103,8 +103,12 @@ export interface ConstructorStanding {
 export interface StandingsTable {
   season: string;
   round?: string;
-  DriverStandings?: DriverStanding[];
-  ConstructorStandings?: ConstructorStanding[];
+  StandingsLists?: Array<{
+    season: string;
+    round: string;
+    DriverStandings?: DriverStanding[];
+    ConstructorStandings?: ConstructorStanding[];
+  }>;
 }
 
 // API Response Types
@@ -153,8 +157,12 @@ export interface StandingsResponse {
     StandingsTable: {
       season: string;
       round?: string;
-      DriverStandings?: DriverStanding[];
-      ConstructorStandings?: ConstructorStanding[];
+      StandingsLists: Array<{
+        season: string;
+        round: string;
+        DriverStandings?: DriverStanding[];
+        ConstructorStandings?: ConstructorStanding[];
+      }>;
     };
   };
 }
