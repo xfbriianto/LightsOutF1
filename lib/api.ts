@@ -1,6 +1,7 @@
 import {
   RacesResponse,
   ResultsResponse,
+  SprintResultsResponse,
   StandingsResponse,
   Race,
   RaceResult,
@@ -75,6 +76,24 @@ export async function getRaceResults(
     return [];
   } catch (error) {
     console.error("Error fetching race results:", error);
+    return [];
+  }
+}
+
+// Get sprint results by round
+export async function getSprintResults(
+  season: string,
+  round: string
+): Promise<RaceResult[]> {
+  try {
+    const url = `${JOLPI_API_BASE}/${season}/${round}/sprint.json`;
+    const response = await fetchWithCache<SprintResultsResponse>(url);
+    if (response.MRData.RaceTable.Races && response.MRData.RaceTable.Races[0]) {
+      return response.MRData.RaceTable.Races[0].SprintResults || [];
+    }
+    return [];
+  } catch (error) {
+    console.error("Error fetching sprint results:", error);
     return [];
   }
 }

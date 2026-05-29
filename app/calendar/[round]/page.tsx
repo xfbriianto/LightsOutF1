@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getCurrentRaces, getRaceResults } from "@/lib/api";
+import { getCurrentRaces, getRaceResults, getSprintResults } from "@/lib/api";
 import { formatWIBDateShort, formatWIBTime } from "@/lib/timezone";
 import { Race } from "@/types/f1";
 import { ResultsTable } from "@/components/results/results-table";
@@ -41,9 +41,16 @@ export default async function RaceDetailPage({ params }: RaceDetailPageProps) {
   const now = new Date();
   const raceDate = new Date(race.date);
   const isFinished = raceDate <= now;
+  const hasSprint = Boolean(race.Sprint);
+  const sprintDate = race.Sprint ? new Date(race.Sprint.date) : null;
+  const isSprintFinished = Boolean(sprintDate && sprintDate <= now);
   const sessions = getRaceSessions(race);
   const season = new Date(race.date).getFullYear().toString();
   const results = isFinished ? await getRaceResults(season, race.round) : [];
+  const sprintResults =
+    hasSprint && isSprintFinished
+      ? await getSprintResults(season, race.round)
+      : [];
 
   return (
     <main className="min-h-screen">
@@ -209,6 +216,30 @@ export default async function RaceDetailPage({ params }: RaceDetailPageProps) {
             </div>
           )}
         </section>
+
+        {hasSprint && (
+          <section className="space-y-4">
+            <div>
+              <h2 className="text-2xl font-bold text-foreground">
+                Sprint Results
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                {isSprintFinished
+                  ? "Official results from the sprint endpoint."
+                  : "Sprint results will appear after the sprint is completed."}
+              </p>
+            </div>
+            {isSprintFinished ? (
+              <ResultsTable results={sprintResults} />
+            ) : (
+              <div className="rounded-xl border border-[#2a2530] bg-[#141118] p-6 text-center">
+                <p className="text-sm text-[#a09aaa]">
+                  No sprint results available yet for this Grand Prix.
+                </p>
+              </div>
+            )}
+          </section>
+        )}
       </div>
     </main>
   );

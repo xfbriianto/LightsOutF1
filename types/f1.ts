@@ -146,6 +146,24 @@ export interface ResultsResponse {
   };
 }
 
+export interface SprintResultsResponse {
+  MRData: {
+    xmlns: string;
+    series: string;
+    url: string;
+    limit: string;
+    offset: string;
+    total: string;
+    RaceTable: {
+      season: string;
+      round: string;
+      Races: Array<{
+        SprintResults: RaceResult[];
+      } & Race>;
+    };
+  };
+}
+
 export interface StandingsResponse {
   MRData: {
     xmlns: string;

@@ -14,11 +14,11 @@ export function HeroSection() {
           italic
           textColor="#ffffff"
           strokeColor="#ff1600"
-          minFontSize={36}
+          minFontSize={100}
           className="drop-shadow-[0_0_24px_rgba(255,22,0,0.35)]"
         />
       </div>
-      <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
+      <p className="mx-auto max-w-3xl text-lg text-muted-foreground">
         Live standings, race calendar, results, and drivers information. Stay
         updated with every lap.
       </p>
