@@ -2,8 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { Race, RaceResult } from "@/types/f1";
-import { getCurrentRaces, getRaceResults } from "@/lib/api";
+import { getCurrentRaces, getRaceResults, getSprintResults } from "@/lib/api";
 import { RaceSelector } from "@/components/results/race-selector";
+import {
+  ResultTypeSelector,
+  type ResultType,
+} from "@/components/results/result-type-selector";
 import { ResultsTable } from "@/components/results/results-table";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent } from "@/components/ui/card";
@@ -11,6 +15,7 @@ import { Card, CardContent } from "@/components/ui/card";
 export default function ResultsPage() {
   const [races, setRaces] = useState<Race[]>([]);
   const [selectedRound, setSelectedRound] = useState("");
+  const [resultType, setResultType] = useState<ResultType>("race");
   const [results, setResults] = useState<RaceResult[]>([]);
   const [loading, setLoading] = useState(true);
   const [resultsLoading, setResultsLoading] = useState(false);
@@ -43,22 +48,34 @@ export default function ResultsPage() {
     fetchRaces();
   }, []);
 
-  // Load results when selected race changes
+  // Reset to race results when selected GP has no sprint
   useEffect(() => {
-    if (!selectedRound) return;
+    if (selectedRaceInfo && !selectedRaceInfo.Sprint && resultType === "sprint") {
+      setResultType("race");
+    }
+  }, [selectedRaceInfo, resultType]);
+
+  // Load results when selected race or result type changes
+  useEffect(() => {
+    if (!selectedRound || races.length === 0) return;
+
+    const selectedRace = races.find((r) => r.round === selectedRound);
+    if (!selectedRace) return;
+
+    setSelectedRaceInfo(selectedRace);
+
+    const effectiveType =
+      resultType === "sprint" && selectedRace.Sprint ? "sprint" : "race";
 
     const fetchResults = async () => {
       setResultsLoading(true);
       try {
-        const selectedRace = races.find((r) => r.round === selectedRound);
-        if (selectedRace) {
-          setSelectedRaceInfo(selectedRace);
-          const data = await getRaceResults(
-            new Date().getFullYear().toString(),
-            selectedRound
-          );
-          setResults(data);
-        }
+        const season = new Date(selectedRace.date).getFullYear().toString();
+        const data =
+          effectiveType === "sprint"
+            ? await getSprintResults(season, selectedRound)
+            : await getRaceResults(season, selectedRound);
+        setResults(data);
       } catch (err) {
         setError(
           err instanceof Error ? err.message : "Failed to load results"
@@ -69,7 +86,7 @@ export default function ResultsPage() {
     };
 
     fetchResults();
-  }, [selectedRound, races]);
+  }, [selectedRound, races, resultType]);
 
   if (error) {
     return (
@@ -85,15 +102,16 @@ export default function ResultsPage() {
 
   const finishedRaces = races.filter((race) => new Date(race.date) <= new Date());
   const hasNoResults = finishedRaces.length === 0;
+  const hasSprint = Boolean(selectedRaceInfo?.Sprint);
 
   return (
     <main className="min-h-screen">
       <div className="mx-auto max-w-7xl space-y-8 px-4 py-12 sm:px-6 lg:px-8">
         {/* Page Header */}
         <div className="space-y-2">
-          <h1 className="text-4xl font-bold text-foreground">Race Results</h1>
+          <h1 className="text-4xl font-bold text-foreground">Results</h1>
           <p className="text-lg text-muted-foreground">
-            View results from completed races
+            View race and sprint results from completed Grand Prix
           </p>
         </div>
 
@@ -108,16 +126,26 @@ export default function ResultsPage() {
           </Card>
         ) : (
           <>
-            {/* Race Selector */}
-            <div>
+            {/* Selectors */}
+            <div className="grid gap-4 lg:grid-cols-2">
               {loading ? (
-                <Skeleton className="h-28 w-full rounded-xl" />
+                <>
+                  <Skeleton className="h-28 w-full rounded-xl" />
+                  <Skeleton className="h-28 w-full rounded-xl" />
+                </>
               ) : (
-                <RaceSelector
-                  races={races}
-                  selectedRound={selectedRound}
-                  onRoundChange={setSelectedRound}
-                />
+                <>
+                  <RaceSelector
+                    races={races}
+                    selectedRound={selectedRound}
+                    onRoundChange={setSelectedRound}
+                  />
+                  <ResultTypeSelector
+                    value={resultType}
+                    onChange={setResultType}
+                    hasSprint={hasSprint}
+                  />
+                </>
               )}
             </div>
 
@@ -173,6 +201,16 @@ export default function ResultsPage() {
 )}
 
             {/* Results Table */}
+            <div className="space-y-2">
+              <p className="text-sm text-muted-foreground">
+                Showing{" "}
+                <span className="font-semibold text-foreground">
+                  {resultType === "sprint" && hasSprint
+                    ? "Sprint Results"
+                    : "Race Results"}
+                </span>
+              </p>
+            </div>
             {resultsLoading ? (
               <div className="space-y-2">
                 <Skeleton className="h-12 w-full" />
