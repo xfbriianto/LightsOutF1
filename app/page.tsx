@@ -4,7 +4,7 @@ import { NextRaceCard } from "@/components/home/next-race-card";
 import { TopDriversSection } from "@/components/home/top-drivers-section";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent } from "@/components/ui/card";
-import { getNextRace, getDriverStandings } from "@/lib/api";
+import { getDashboardRace, getDriverStandings } from "@/lib/api";
 
 function LoadingSkeleton() {
   return (
@@ -25,7 +25,7 @@ function LoadingSkeleton() {
 }
 
 async function NextRaceSection() {
-  const race = await getNextRace();
+  const race = await getDashboardRace();
 
   if (!race) {
     return (

@@ -2,13 +2,16 @@ import {
   RacesResponse,
   ResultsResponse,
   SprintResultsResponse,
+  QualifyingResultsResponse,
   StandingsResponse,
   Race,
   RaceResult,
+  QualifyingResult,
   DriverStanding,
   ConstructorStanding,
 } from "@/types/f1";
 import { getWIBDate } from "@/lib/timezone";
+import { getRacePhase } from "@/lib/race-phase";
 
 const JOLPI_API_BASE = "https://api.jolpi.ca/ergast/f1";
 
@@ -139,16 +142,50 @@ export async function getNextRace(): Promise<Race | null> {
     const races = await getCurrentRaces();
     const now = new Date();
 
-    // Find the first race that hasn't finished yet
-    const nextRace = races.find((race) => {
-      const raceDate = new Date(race.date);
-      return raceDate > now;
-    });
+    const nextRace = races.find((race) => getRacePhase(race, now) === "before");
 
     return nextRace || null;
   } catch (error) {
     console.error("Error fetching next race:", error);
     return null;
+  }
+}
+
+// Race shown on dashboard: live GP, or next upcoming
+export async function getDashboardRace(): Promise<Race | null> {
+  try {
+    const races = await getCurrentRaces();
+    const now = new Date();
+
+    const liveRace = races.find((race) => getRacePhase(race, now) === "live");
+    if (liveRace) return liveRace;
+
+    const postRace = races.find((race) => getRacePhase(race, now) === "post");
+    if (postRace) return postRace;
+
+    const nextRace = races.find((race) => getRacePhase(race, now) === "before");
+    return nextRace || null;
+  } catch (error) {
+    console.error("Error fetching dashboard race:", error);
+    return null;
+  }
+}
+
+// Get qualifying results (starting grid) by round
+export async function getQualifyingResults(
+  season: string,
+  round: string
+): Promise<QualifyingResult[]> {
+  try {
+    const url = `${JOLPI_API_BASE}/${season}/${round}/qualifying.json`;
+    const response = await fetchWithCache<QualifyingResultsResponse>(url);
+    if (response.MRData.RaceTable.Races?.[0]) {
+      return response.MRData.RaceTable.Races[0].QualifyingResults || [];
+    }
+    return [];
+  } catch (error) {
+    console.error("Error fetching qualifying results:", error);
+    return [];
   }
 }
 

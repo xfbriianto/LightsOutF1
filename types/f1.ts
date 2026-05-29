@@ -56,6 +56,16 @@ export interface Constructor {
   url: string;
 }
 
+export interface QualifyingResult {
+  number: string;
+  position: string;
+  Driver: Driver;
+  Constructor: Constructor;
+  Q1?: string;
+  Q2?: string;
+  Q3?: string;
+}
+
 export interface RaceResult {
   number: string;
   position: string;
@@ -141,6 +151,24 @@ export interface ResultsResponse {
       round: string;
       Races: Array<{
         Results: RaceResult[];
+      } & Race>;
+    };
+  };
+}
+
+export interface QualifyingResultsResponse {
+  MRData: {
+    xmlns: string;
+    series: string;
+    url: string;
+    limit: string;
+    offset: string;
+    total: string;
+    RaceTable: {
+      season: string;
+      round: string;
+      Races: Array<{
+        QualifyingResults: QualifyingResult[];
       } & Race>;
     };
   };

@@ -1,6 +1,6 @@
 import { Race } from "@/types/f1";
-import { CountdownTimer } from "./countdown-timer";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { RacePhaseContent, RacePhaseLabel } from "./race-phase-content";
+import { Card, CardContent } from "@/components/ui/card";
 import { toWIBTime, formatWIBTime } from "@/lib/timezone";
 
 interface NextRaceCardProps {
@@ -43,7 +43,7 @@ export function NextRaceCard({ race }: NextRaceCardProps) {
 
         {/* Header */}
         <div className="relative z-10 flex items-center justify-between mb-4">
-          <span className="text-sm font-medium text-white">Next Race</span>
+          <span className="text-sm font-medium text-white">Grand Prix</span>
           <span className="text-xs text-[#a09aaa] bg-white/7 border border-white/10 px-3 py-1 rounded-full">
             Round {race.round}
           </span>
@@ -61,9 +61,10 @@ export function NextRaceCard({ race }: NextRaceCardProps) {
       <div className="h-px bg-[#1e1a26]" />
 
       <CardContent className="bg-[#141118] px-5 pt-4">
-        {/* Countdown */}
-        <p className="text-[11px] font-semibold text-[#706a7a] uppercase tracking-widest mb-3">Time Until Race</p>
-        <CountdownTimer race={race} /> {/* komponen lo tetap dipakai */}
+        <div className="mb-3">
+          <RacePhaseLabel race={race} />
+        </div>
+        <RacePhaseContent race={race} />
 
         {/* Sessions */}
         <p className="text-[11px] font-semibold text-[#706a7a] uppercase tracking-widest mb-3 mt-5">Race Sessions (WIB)</p>
