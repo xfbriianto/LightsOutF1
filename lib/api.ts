@@ -157,11 +157,14 @@ export async function getDashboardRace(): Promise<Race | null> {
     const races = await getCurrentRaces();
     const now = new Date();
 
-    const liveRace = races.find((race) => getRacePhase(race, now) === "live");
-    if (liveRace) return liveRace;
+    const gridRace = races.find((race) => getRacePhase(race, now) === "grid");
+    if (gridRace) return gridRace;
 
     const postRace = races.find((race) => getRacePhase(race, now) === "post");
     if (postRace) return postRace;
+
+    const weekendRace = races.find((race) => getRacePhase(race, now) === "weekend");
+    if (weekendRace) return weekendRace;
 
     const nextRace = races.find((race) => getRacePhase(race, now) === "before");
     return nextRace || null;

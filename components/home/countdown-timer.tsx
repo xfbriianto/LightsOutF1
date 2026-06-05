@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Race } from "@/types/f1";
-import { getTimeUntilRace } from "@/lib/api";
+import { getTimeUntilWeekendStart } from "@/lib/race-phase";
 
 interface CountdownTimerProps {
   race: Race;
@@ -18,7 +18,7 @@ export function CountdownTimer({ race }: CountdownTimerProps) {
 
   useEffect(() => {
     const updateCountdown = () => {
-      const time = getTimeUntilRace(race);
+      const time = getTimeUntilWeekendStart(race);
       setTimeLeft({
         days: time.days,
         hours: time.hours,

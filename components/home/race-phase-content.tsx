@@ -29,7 +29,7 @@ export function RacePhaseContent({ race }: RacePhaseContentProps) {
   }, [updatePhase]);
 
   useEffect(() => {
-    if (phase !== "live") {
+    if (phase !== "grid") {
       setQualifying([]);
       return;
     }
@@ -76,7 +76,7 @@ export function RacePhaseContent({ race }: RacePhaseContentProps) {
     fetchResults();
   }, [phase, race]);
 
-  if (phase === "live") {
+  if (phase === "grid") {
     return <OfficialStartingGrid results={qualifying} loading={loading} />;
   }
 
@@ -88,7 +88,15 @@ export function RacePhaseContent({ race }: RacePhaseContentProps) {
     return <CountdownTimer race={race} />;
   }
 
-  return <CountdownTimer race={race} />;
+  // Weekend started (FP1 window) but race isn't in the live grid window yet.
+  return (
+    <div className="rounded-xl border border-[#2a2530] bg-neutral-950/50 px-4 py-6 text-center backdrop-blur-sm">
+      <p className="text-sm font-semibold text-[#e03535]">Sedang Berlangsung</p>
+      <p className="mt-1 text-sm text-[#a09aaa]">
+        Free Practice 1 is live. Starting Grid will appear when the race begins.
+      </p>
+    </div>
+  );
 }
 
 export function RacePhaseLabel({ race }: { race: Race }) {
@@ -101,7 +109,7 @@ export function RacePhaseLabel({ race }: { race: Race }) {
     return () => clearInterval(interval);
   }, [race]);
 
-  if (phase === "live") {
+  if (phase === "grid") {
     return (
       <p className="text-[11px] font-semibold uppercase tracking-widest text-[#e03535]">
         Race In Progress
@@ -112,7 +120,15 @@ export function RacePhaseLabel({ race }: { race: Race }) {
   if (phase === "before") {
     return (
       <p className="text-[11px] font-semibold uppercase tracking-widest text-[#706a7a]">
-        Time Until Race
+        Time Until FP1
+      </p>
+    );
+  }
+
+  if (phase === "weekend") {
+    return (
+      <p className="text-[11px] font-semibold uppercase tracking-widest text-[#e03535]">
+        Sedang Berlangsung
       </p>
     );
   }
@@ -127,7 +143,7 @@ export function RacePhaseLabel({ race }: { race: Race }) {
 
   return (
     <p className="text-[11px] font-semibold uppercase tracking-widest text-[#706a7a]">
-      Time Until Race
+      Time Until FP1
     </p>
   );
 }

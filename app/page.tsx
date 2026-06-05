@@ -1,10 +1,10 @@
 import { Suspense } from "react";
 import { HeroSection } from "@/components/home/hero-section";
-import { NextRaceCard } from "@/components/home/next-race-card";
+import { DashboardNextRaceSection } from "@/components/home/dashboard-next-race-section";
 import { TopDriversSection } from "@/components/home/top-drivers-section";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent } from "@/components/ui/card";
-import { getDashboardRace, getDriverStandings } from "@/lib/api";
+import { getDriverStandings } from "@/lib/api";
 
 function LoadingSkeleton() {
   return (
@@ -22,20 +22,6 @@ function LoadingSkeleton() {
       </CardContent>
     </Card>
   );
-}
-
-async function NextRaceSection() {
-  const race = await getDashboardRace();
-
-  if (!race) {
-    return (
-      <div className="rounded-lg border border-border bg-card p-6 text-center">
-        <p className="text-muted-foreground">No upcoming races scheduled</p>
-      </div>
-    );
-  }
-
-  return <NextRaceCard race={race} />;
 }
 
 async function DriversStandingsSection() {
@@ -73,9 +59,7 @@ export default function Home() {
         <HeroSection />
 
         {/* Next Race Section */}
-        <Suspense fallback={<LoadingSkeleton />}>
-          <NextRaceSection />
-        </Suspense>
+        <DashboardNextRaceSection />
 
         {/* Drivers Standings Section */}
         <Suspense fallback={<LoadingSkeleton />}>
